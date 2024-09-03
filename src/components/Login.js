@@ -1,12 +1,13 @@
 import React, { useRef, useState } from 'react'
 import validate from '../utils/validate'
-import { auth } from "../utils/firebase.js";
 import { createUserWithEmailAndPassword , signInWithEmailAndPassword } from "firebase/auth";
 import Header from './Header.js';
-import { useNavigate } from 'react-router-dom';
 import {updateProfile} from "firebase/auth"
+import { auth } from "../utils/firebase.js";
 import { useDispatch } from 'react-redux';
 import {addUser} from "../utils/userSlice"
+import { Photo } from '../constants/URL.js';
+
 
 const Login = () => {
   const email = useRef(null);
@@ -15,9 +16,9 @@ const Login = () => {
   const dispatch = useDispatch();
 
 
+
   const[isSignin , setisSignin]=useState(true)
   const[errmess , seterrmess] = useState(null);
-  const navigate = useNavigate();
 
   const toggleSignIn = () => {
     setisSignin(!isSignin)
@@ -37,7 +38,7 @@ const Login = () => {
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name.current.value , 
-            photoURL: "https://avatars.githubusercontent.com/u/65398948?v=4"
+            photoURL: Photo,
           }).then(() => {
             const {uid , email , displayName , photoURL} = auth.currentUser;
             dispatch(
@@ -45,10 +46,9 @@ const Login = () => {
               uid: uid , 
               email:email , 
               displayName: displayName , 
-              photoURL: photoURL
+              photoURL: photoURL,
             })
           )
-            navigate("/browse");
             // ...
           }).catch((error) => {
             // An error occurred
@@ -69,7 +69,6 @@ const Login = () => {
       signInWithEmailAndPassword(auth, email.current.value, password.current.value)
   .then((userCredential) => {
     const user = userCredential.user;
-    navigate("/browse")
 
   })
   .catch((error) => {
